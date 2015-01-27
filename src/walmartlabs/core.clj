@@ -7,20 +7,20 @@
 
 (def cli-options
   [["-h" "--help"]
-   ["-p" "--price price-file" "find-loss-gain -p [price-file-name]."
+   ["-p" "--price price-file" "find-loss-gain -p [price-file-name-in-directory]."
     :id :pri
-    :default "price.csv"
+    :default "prices.csv"
     :validate [#(re-find #".+\.csv" %) "Must be a CSV file."]]
    ["-d" "--directory path" "find-loss-gain -d [path-to-directory]."
     :id :dir
     :default "./resources/data/"]
    ["-t" "--threads thread-num" "find-loss-gain -t [thread-num]."
     :id :thread
-    :default 4]
+    :default "1"]
    ]
   )
 
-(def help-txt "To find the loss and gain for each store, simply run: \"find-loss-gain -p [price-file-name] -d [path-to-directory] -t [threads-number]\" ")
+(def help-txt "To find the loss and gain for each store, simply run: \"find-loss-gain -p [price-file-name-in-directory] -d [path-to-directory] -t [threads-number]\" ")
 
 
 (defn exit [status & msg]
@@ -37,8 +37,6 @@
     (when (:help opts)
       (println help-txt)
       (exit 0 summary))
-    (when (:pri opts)
-      (println (:pri opts)))
     (when (:dir opts)
-      (clojure.pprint/pprint (f/read-files (:dir opts) (:thread opts))))
+      (f/read-files (:dir opts) (:pri opts) (Integer/parseInt (:thread opts))))
     ))
