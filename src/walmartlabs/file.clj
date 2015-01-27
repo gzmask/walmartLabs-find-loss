@@ -92,9 +92,6 @@
         t-map (apply merge-with concat r-map) ;merge duplicated stores
         store-map (filter-map (complement nil?) (f-map #(apply merge-with concat %) t-map)) ;merge duplicated products
         ]
-    (clojure.pprint/pprint file-count)
-    (clojure.pprint/pprint (count files-v))
-    (clojure.pprint/pprint (count file-chans))
     (println "store, plusminus")
     (doseq [w (get-errors price-map store-map)]
       (println (format "%s, %.2f" (first w) (second w)))
