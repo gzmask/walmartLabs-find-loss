@@ -10,11 +10,6 @@
                (nil? (second t))))
      (keyword (second t)))))
 
-(defn parse-total [s]
-  (let [t (str/split (str/trim s) #" ")]
-    (when (not (nil? (second t)))
-    (Float/parseFloat (second t)))))
-
 (defn parse-products [v]
   (for [p (group-by first
                     (filter (complement nil?)
@@ -46,7 +41,6 @@
     (fn [v]
       {(parse-store (first v))
        (parse-products (drop-last (rest v)))
-       ;:total (parse-total (last v))
        }
       ))
    ))
@@ -81,14 +75,14 @@
 ;;read files and parses them.
 (defn read-files
   [dir pri thread-num]
-  (let [files (file-seq (io/file dir))
-        price-map (read-correct-price (io/file (str dir pri)))
+  (let [files (file-seq (io/file dir)) ;; store files
+        price-map (read-correct-price (io/file (str dir pri))) ;; accountant file
         file-count (quot (count files) thread-num)
-        files-v (partition-all file-count files)
-        file-chans  (repeatedly (count files-v) #(async/chan 1 file-ducer))
-        _ (doseq [n (range (count files-v))] (async/onto-chan (nth file-chans n) (nth files-v n)))
-        prod-chan (async/merge file-chans)
-        r-map (async/<!! (async/into [] prod-chan))
+        files-v (partition-all file-count files) ;;partition files according to thread-num
+        file-chans  (repeatedly (count files-v) #(async/chan 1 file-ducer)) ;;create channels according to thread-num
+        _ (doseq [n (range (count files-v))] (async/onto-chan (nth file-chans n) (nth files-v n))) ;;assigned files to different channels
+        prod-chan (async/merge file-chans) ;;merge the channels
+        r-map (async/<!! (async/into [] prod-chan)) ;;pop the channels
         t-map (apply merge-with concat r-map) ;merge duplicated stores
         store-map (filter-map (complement nil?) (f-map #(apply merge-with concat %) t-map)) ;merge duplicated products
         ]
