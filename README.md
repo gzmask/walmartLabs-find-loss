@@ -13,10 +13,11 @@ lein bin
 lein run -- -h
 
   -h, --help
-  -p, --price price-file    prices.csv         find-loss-gain -p [price-file-name
-in-directory].
-  -d, --directory path      ./resources/data/  find-loss-gain -d [path-to-directo
-y].
+  
+  -p, --price price-file    prices.csv         find-loss-gain -p [price-file-name-in-directory].
+
+  -d, --directory path      ./resources/data/  find-loss-gain -d [path-to-directoy].
+  
   -t, --threads thread-num  1                  find-loss-gain -t [thread-num].
 
 ## Linux/OSX Usage
