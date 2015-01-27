@@ -37,6 +37,6 @@
     (when (:help opts)
       (println help-txt)
       (exit 0 summary))
-    (when (:dir opts)
+    (when (and (:dir opts) (nil? (:help opts)))
       (f/read-files (:dir opts) (:pri opts) (Integer/parseInt (:thread opts))))
     ))

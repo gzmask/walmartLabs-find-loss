@@ -8,6 +8,17 @@ find loss or gains from stores
 
 lein bin
 
+## Help
+
+lein run -- -h
+
+  -h, --help
+  -p, --price price-file    prices.csv         find-loss-gain -p [price-file-name
+in-directory].
+  -d, --directory path      ./resources/data/  find-loss-gain -d [path-to-directo
+y].
+  -t, --threads thread-num  1                  find-loss-gain -t [thread-num].
+
 ## Linux/OSX Usage
 
 ./target/find-loss-gain -t 1[more if multi-core machine] -d ./resources/data-full/ > res.log
