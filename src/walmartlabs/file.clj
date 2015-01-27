@@ -17,17 +17,22 @@
     (Float/parseFloat (second t)))))
 
 (defn parse-products [v]
-  (filter (complement nil?)
-    (for [p v]
-      (let [t (re-find #"(.+)\s+(\d{10})\s+(\d+\.?\d*)" (str/trim p))]
-        (when (not (or (nil? (second t))
-                       (nil? (nth t 2))
-                       (nil? (nth t 3))))
-        [;:name (second t)
-         ;:id (nth t 2)
-         ;:price (Float/parseFloat (nth t 3))
-         (nth t 2) (Float/parseFloat (nth t 3))
-         ])))))
+  (for [p (group-by first
+    (filter (complement nil?)
+      (for [p v]
+        (let [t (re-find #"(.+)\s+(\d{10})\s+(\d+\.?\d*)" (str/trim p))]
+          (when (not (or (nil? (second t))
+                         (nil? (nth t 2))
+                         (nil? (nth t 3))))
+          [;:name (second t)
+           ;:id (nth t 2)
+           ;:price (Float/parseFloat (nth t 3))
+           (keyword (nth t 2)) (Float/parseFloat (nth t 3))])))))]
+    [(first p)
+     (for [pri (second p)]
+       (second pri)
+       )]
+    ))
 
 (def file-ducer
   (comp
