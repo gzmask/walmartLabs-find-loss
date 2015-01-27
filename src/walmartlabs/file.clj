@@ -65,12 +65,13 @@
 
 (defn get-errors
   [price stores]
-  (for [store (keys stores)]
-    [(name store)
-     (reduce +
-      (for [product (keys (store stores))]
-        (reduce + (map (fn [p] (- p (product price))) (product (store stores)))))
-      )]))
+  (sort-by second
+    (for [store (keys stores)]
+      [(name store)
+       (reduce +
+        (for [product (keys (store stores))]
+          (reduce + (map (fn [p] (- p (product price))) (product (store stores)))))
+        )])))
 
 ;;read files and parses them.
 (defn read-files
