@@ -17,15 +17,17 @@
     (Float/parseFloat (second t)))))
 
 (defn parse-products [v]
+  (filter (complement nil?)
     (for [p v]
       (let [t (re-find #"(.+)\s+(\d{10})\s+(\d+\.?\d*)" (str/trim p))]
         (when (not (or (nil? (second t))
                        (nil? (nth t 2))
                        (nil? (nth t 3))))
-        {:name (second t)
-         :id (nth t 2)
-         :price (Float/parseFloat (nth t 3))
-         }))))
+        [;:name (second t)
+         ;:id (nth t 2)
+         ;:price (Float/parseFloat (nth t 3))
+         (nth t 2) (Float/parseFloat (nth t 3))
+         ])))))
 
 (def file-ducer
   (comp
@@ -41,24 +43,29 @@
    (map
     (fn [s]
       (str/split-lines s)))
-   ;;
+   ;;parse the data into maps
    (map
     (fn [v]
       {:store (parse-store (first v))
        :products (parse-products (drop-last (rest v)))
-       :count (- (count v) 2)
        :total (parse-total (last v))}
       ))
    ))
 
-(def prod-chan (async/chan 1 file-ducer))
+;(def prod-chan (async/chan 1 file-ducer))
 
 ;(def result-chan (async/reduce #(str %1 %2 " ") "" prod-chan))
 
+;;read files and parses them.
 (defn read-files
-  [dir]
-  (async/onto-chan prod-chan (file-seq (io/file dir)))
-  (async/<!! (async/into [] prod-chan)))
+  [dir thread-num]
+  (let [files (file-seq (io/file dir))
+        file-count (quot (count files) thread-num)
+        files-v (partition-all file-count files)
+        file-chans (take (count files-v) (repeat (async/chan 1 file-ducer)))
+        _ (doseq [n (range (count files-v))] (async/onto-chan (nth file-chans n) (nth files-v n)))
+        prod-chan (async/merge file-chans)]
+  (async/<!! (async/into [] prod-chan))))
 
 ;(read-files "./resources/data")
 

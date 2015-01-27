@@ -14,10 +14,13 @@
    ["-d" "--directory path" "find-loss-gain -d [path-to-directory]."
     :id :dir
     :default "./resources/data/"]
+   ["-t" "--threads thread-num" "find-loss-gain -t [thread-num]."
+    :id :thread
+    :default 4]
    ]
   )
 
-(def help-txt "To find the loss and gain for each store, simply run: \"find-loss-gain -p [price-file-name] -d [path-to-directory]\" ")
+(def help-txt "To find the loss and gain for each store, simply run: \"find-loss-gain -p [price-file-name] -d [path-to-directory] -t [threads-number]\" ")
 
 
 (defn exit [status & msg]
@@ -37,5 +40,5 @@
     (when (:pri opts)
       (println (:pri opts)))
     (when (:dir opts)
-      (clojure.pprint/pprint (f/read-files (:dir opts))))
+      (clojure.pprint/pprint (f/read-files (:dir opts) (:thread opts))))
     ))
