@@ -85,7 +85,7 @@
         price-map (read-correct-price (io/file (str dir pri)))
         file-count (quot (count files) thread-num)
         files-v (partition-all file-count files)
-        file-chans (take (count files-v) (repeat (async/chan 1 file-ducer)))
+        file-chans (for [k (range (count files-v))] (async/chan 1 file-ducer))
         _ (doseq [n (range (count files-v))] (async/onto-chan (nth file-chans n) (nth files-v n)))
         prod-chan (async/merge file-chans)
         r-map (async/<!! (async/into [] prod-chan))
