@@ -2,7 +2,7 @@
 
 find loss or gains from stores
 
-* multi-threads for performant file IO! (not that it matters when all harddrives are slow, but some big servers might has SSD-Raids ... )
+* multi-threads for performant file IO! (not that it matters when all harddrives are slow, but some big servers might has SSD-Raids ... ) Go blocks are lightweight. Try over 1000!
 * you will also find out from the data-set that what kind of nasty stuff walmart is selling us. 
 
 ## Compile
